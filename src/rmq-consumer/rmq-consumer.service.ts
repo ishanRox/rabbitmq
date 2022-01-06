@@ -1,7 +1,8 @@
 import { createParamDecorator, Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMqConfig } from './config/config';
 const amqp = require('amqplib');
-
+//amqplib used as a base package
+//https://www.npmjs.com/package/amqplib
 
 @Injectable()
 export class RmqConsumerService implements OnModuleInit {
