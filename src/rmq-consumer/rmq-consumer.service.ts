@@ -1,6 +1,6 @@
 import { createParamDecorator, Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMqConfig } from './config/config';
-const amqp = require('amqplib/callback_api');
+const amqp = require('amqplib');
 
 
 @Injectable()
@@ -12,41 +12,42 @@ export class RmqConsumerService implements OnModuleInit {
         this.rabbitmQconfig = config;
     }
 
-    
+
     onModuleInit() {
         //remove this if other service call initConsumer
-        this.initConsumer();
+        this.initConsumer((consumerData)=>{
+            console.log('our function with some other stuff');            
+            console.log(consumerData,'message');
+    });
     }
 
-    initConsumer(consumerCallback?:any) {
-        const queue = this.rabbitmQconfig.queue;
-        const url = this.rabbitmQconfig.url;
-        amqp.connect(url, function (error0, connection) {
-            if (error0) {
-                throw error0;
-            }
-            connection.createChannel(function (error1, channel) {
-                if (error1) {
-                    throw error1;
-                }
-                channel.assertQueue(queue, {
-                    durable: true
-                });
-                channel.prefetch(1);
+    initConsumer(consumerCallback?: any) {
 
-                channel.consume(queue, function (msg) {
-                    if (consumerCallback) {
-                        consumerCallback(msg); 
-                    } else {
-                        console.log("Received '%s'", msg.content.toString());
+        const url = this.rabbitmQconfig.url;
+
+        const queue = this.rabbitmQconfig.queue;
+
+        const open = amqp.connect(url);
+       
+
+        // Consumer
+        open.then(function (conn) {
+            return conn.createChannel();
+        }).then(function (ch) {
+            return ch.assertQueue(queue).then(function (ok) {
+                return ch.consume(queue, function (publishedData) {
+                    if (publishedData !== null) {
+                        if(consumerCallback){
+                            consumerCallback(publishedData)
+                        }else{
+                            console.log(publishedData.content.toString());
+                        }
+                        ch.ack(publishedData);
                     }
-                    setTimeout(function () {
-                        channel.ack(msg);
-                    }, 1000);
                 });
             });
-        });
+        }).catch(console.warn);
     }
 
-     
+
 }
