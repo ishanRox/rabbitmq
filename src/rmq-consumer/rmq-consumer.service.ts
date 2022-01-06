@@ -29,21 +29,19 @@ export class RmqConsumerService implements OnModuleInit {
 
         const open = amqp.connect(url);
 
-
-        // Consumer
-        open.then(function (conn) {
+        open.then( (conn) =>{
             return conn.createChannel();
-        }).then(function (ch) {
-                return ch.consume(queue, function (publishedData) {
-                    if (publishedData !== null) {
-                        if (consumerCallback) {
-                            consumerCallback(publishedData)
-                        } else {
-                            console.log(publishedData.content.toString());
-                        }
-                        ch.ack(publishedData);
+        }).then((channel) => {
+            return channel.consume(queue,  (publishedData)=> {
+                if (publishedData !== null) {
+                    if (consumerCallback) {
+                        consumerCallback(publishedData)
+                    } else {
+                        console.log(publishedData.content.toString());
                     }
-                });
+                    channel.ack(publishedData);
+                }
+            });
         }).catch(console.warn);
     }
 
