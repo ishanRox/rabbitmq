@@ -7,7 +7,12 @@ import { RmqConsumerModule } from './rmq-consumer/rmq-consumer.module';
   imports: [
     RmqConsumerModule.connectToRabbitMq({
       url: "amqps://sxkayomg:phGJceWuzPIlxmVBXb4rAEsvJGdxlf3g@chimpanzee.rmq.cloudamqp.com/sxkayomg",
-      queue: "poc_queue"
+      queue: "poc_queue",
+      // exchangeOption: {
+      //   exchange: "processing",
+      //   type: "direct",
+      //   options: { durable: true, autoDelete: true }
+      // }
     }),],
   controllers: [AppController],
   providers: [AppService],

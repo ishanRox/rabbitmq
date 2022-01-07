@@ -16,29 +16,40 @@ export class RmqConsumerService implements OnModuleInit {
 
     onModuleInit() {
         //remove this if other service call initConsumer
-        this.initConsumer((consumerData) => {
+         
+        this.initConsumer((msg, consumerData) => {
             console.log('our function with some other stuff');
-            console.log(consumerData, 'message');
+            console.log(consumerData, 'consumerData');
+            console.log(msg, 'msg');
         });
     }
 
     initConsumer(consumerCallback?: any) {
 
         const url = this.rabbitmQconfig.url;
-
         const queue = this.rabbitmQconfig.queue;
+        const assertExchange = this.rabbitmQconfig.exchangeOption;
 
         const open = amqp.connect(url);
 
-        open.then( (conn) =>{
+        open.then((conn) => {
             return conn.createChannel();
         }).then((channel) => {
-            return channel.consume(queue,  (publishedData)=> {
+
+            // create exchange
+            if (assertExchange) {
+                channel.assertExchange(assertExchange.exchange, assertExchange.type, assertExchange.options)
+            }
+
+            return channel.consume(queue, (publishedData) => {
                 if (publishedData !== null) {
+                    const message: string = publishedData.content.toString();
+                    const metadata = publishedData;
+
                     if (consumerCallback) {
-                        consumerCallback(publishedData)
+                        consumerCallback(message, metadata)
                     } else {
-                        console.log(publishedData.content.toString());
+                        console.log(message);
                     }
                     channel.ack(publishedData);
                 }
