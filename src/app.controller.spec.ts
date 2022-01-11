@@ -16,7 +16,7 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(appController.getConsumerData()).toBe('Hello World!');
+      expect(appController.rmqConsumer1()).toBe('Hello World!');
     });
   });
 });

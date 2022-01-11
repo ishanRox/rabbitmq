@@ -1,6 +1,7 @@
 import { createParamDecorator, Injectable, OnModuleInit } from '@nestjs/common';
-import { RabbitMqConfig } from './config/config';
-const amqp = require('amqplib');
+import { RabbitMqConfig } from './types/config';
+import { ExchangeOptions } from './types/exchange-option';
+
 //amqplib used as a base package
 //https://www.npmjs.com/package/amqplib
 
@@ -14,21 +15,13 @@ export class RmqConsumerService implements OnModuleInit {
     }
 
 
-    onModuleInit() {
-        //remove this if other service call initConsumer
-         
-        this.initConsumer((msg, consumerData) => {
-            console.log('our function with some other stuff');
-            console.log(consumerData, 'consumerData');
-            console.log(msg, 'msg');
-        });
+    onModuleInit() { 
     }
 
-    initConsumer(consumerCallback?: any) {
-
+    initConsumer(queue:string,consumerCallback?: any,exchangeOption?: ExchangeOptions) {
+        const amqp = require('amqplib');
         const url = this.rabbitmQconfig.url;
-        const queue = this.rabbitmQconfig.queue;
-        const assertExchange = this.rabbitmQconfig.exchangeOption;
+        const assertExchange = exchangeOption;
 
         const open = amqp.connect(url);
 

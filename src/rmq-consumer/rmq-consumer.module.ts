@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { RabbitMqConfig } from './config/config';
+import { RabbitMqConfig } from './types/config';
 import { RmqConsumerService } from './rmq-consumer.service';
 
 

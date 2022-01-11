@@ -6,13 +6,7 @@ import { RmqConsumerModule } from './rmq-consumer/rmq-consumer.module';
 @Module({
   imports: [
     RmqConsumerModule.connectToRabbitMq({
-      url: "amqps://sxkayomg:phGJceWuzPIlxmVBXb4rAEsvJGdxlf3g@chimpanzee.rmq.cloudamqp.com/sxkayomg",
-      queue: "poc_queue",
-      // exchangeOption: {
-      //   exchange: "processing",
-      //   type: "direct",
-      //   options: { durable: true, autoDelete: true }
-      // }
+      url: "amqps://sxkayomg:phGJceWuzPIlxmVBXb4rAEsvJGdxlf3g@chimpanzee.rmq.cloudamqp.com/sxkayomg", 
     }),],
   controllers: [AppController],
   providers: [AppService],
